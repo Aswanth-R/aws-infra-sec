@@ -1,5 +1,17 @@
 import boto3
 import click
+from prettytable import PrettyTable
+
+ASCII_ART = """
+ █████╗ ██╗    ██╗███████╗    ███████╗███████╗███╗   ██╗████████╗██╗███╗   ██╗███████╗██╗     
+██╔══██╗██║    ██║██╔════╝    ██╔════╝██╔════╝████╗  ██║╚══██╔══╝██║████╗  ██║██╔════╝██║     
+███████║██║ █╗ ██║███████╗    ███████╗█████╗  ██╔██╗ ██║   ██║   ██║██╔██╗ ██║█████╗  ██║     
+██╔══██║██║███╗██║╚════██║    ╚════██║██╔══╝  ██║╚██╗██║   ██║   ██║██║╚██╗██║██╔══╝  ██║     
+██║  ██║╚███╔███╔╝███████║    ███████║███████╗██║ ╚████║   ██║   ██║██║ ╚████║███████╗███████╗
+╚═╝  ╚═╝ ╚══╝╚══╝ ╚══════╝    ╚══════╝╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚═╝╚═╝  ╚═══╝╚══════╝╚══════╝
+                                                                        
+                       AWS Security Sentinel
+"""
 
 def check_public_buckets(s3_client):
     public_buckets = []
@@ -44,40 +56,55 @@ def check_iam_users_without_mfa(iam_client):
             users_without_mfa.append(user['UserName'])
     return users_without_mfa
 
+def create_pretty_table(title, headers, rows):
+    table = PrettyTable()
+    table.title = title
+    table.field_names = headers
+    for row in rows:
+        table.add_row(row)
+    table.align = 'l'  # Left-align text
+    return table
+
 @click.command()
 @click.option('--profile', default='default', help='AWS profile to use')
 @click.option('--region', default='us-east-1', help='AWS region to check')
 def main(profile, region):
+    print(ASCII_ART)
+    click.echo(f"Scanning AWS account using profile: {profile} in region: {region}")
+    click.echo("Initializing security checks...\n")
+
     session = boto3.Session(profile_name=profile, region_name=region)
     s3_client = session.client('s3')
     ec2_client = session.client('ec2')
     iam_client = session.client('iam')
 
-    click.echo("Checking for security issues...")
+    results = []
 
     public_buckets = check_public_buckets(s3_client)
-    if public_buckets:
-        click.echo(f"Public S3 buckets found: {', '.join(public_buckets)}")
-    else:
-        click.echo("No public S3 buckets found.")
+    for bucket in public_buckets:
+        results.append(["S3", bucket, "Public bucket"])
 
     public_sgs = check_public_security_groups(ec2_client)
-    if public_sgs:
-        click.echo(f"Security groups with port 22 open to public: {', '.join(public_sgs)}")
-    else:
-        click.echo("No security groups with port 22 open to public found.")
+    for sg in public_sgs:
+        results.append(["EC2", sg, "Security group with port 22 open to public"])
 
     unencrypted_volumes = check_unencrypted_ebs_volumes(ec2_client)
-    if unencrypted_volumes:
-        click.echo(f"Unencrypted EBS volumes: {', '.join(unencrypted_volumes)}")
-    else:
-        click.echo("No unencrypted EBS volumes found.")
+    for volume in unencrypted_volumes:
+        results.append(["EBS", volume, "Unencrypted volume"])
 
     users_without_mfa = check_iam_users_without_mfa(iam_client)
-    if users_without_mfa:
-        click.echo(f"IAM users without MFA: {', '.join(users_without_mfa)}")
+    for user in users_without_mfa:
+        results.append(["IAM", user, "User without MFA"])
+
+    if results:
+        table = create_pretty_table(
+            "AWS Security Issues Detected",
+            ["Service", "Resource", "Issue"],
+            results
+        )
+        print(table)
     else:
-        click.echo("All IAM users have MFA enabled.")
+        click.echo("No security issues found. Your AWS environment looks secure!")
 
 if __name__ == '__main__':
     main()
