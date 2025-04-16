@@ -4,6 +4,9 @@ CLI interface for AWS Sentinel
 import boto3
 import click
 import sys
+import json
+from datetime import datetime
+from .utils import import_datetime_for_json
 from .core import (
     check_public_buckets,
     check_public_security_groups,
@@ -62,15 +65,16 @@ def scan(profile, region, checks, output, severity, verbose):
     including public S3 buckets, exposed security groups, unencrypted
     volumes, and IAM users without MFA.
     """
-    print(BANNER)
-    
-    click.echo(f"Scanning AWS account using profile: {profile} in region: {region}")
+    if output == 'table':
+        print(BANNER)
+        click.echo(f"Scanning AWS account using profile: {profile} in region: {region}")
     if verbose:
         click.echo(f"Checks: {checks}")
         click.echo(f"Output format: {output}")
         click.echo(f"Severity filter: {severity}")
     
-    click.echo("Initializing security checks...\n")
+    if output == 'table':
+        click.echo("Initializing security checks...\n")
 
     try:
         session = boto3.Session(profile_name=profile, region_name=region)
@@ -137,29 +141,54 @@ def scan(profile, region, checks, output, severity, verbose):
                 results
             )
             print(table)
+            click.echo(f"\nScan complete. Found {len(results)} security issues.")
         elif output == 'json':
             import json
-            json_results = []
+            json_results = {
+                'scan_results': {
+                    'profile': profile,
+                    'region': region,
+                    'scan_time': import_datetime_for_json(),
+                    'issues_count': len(results),
+                    'issues': []
+                }
+            }
+            
             for r in results:
-                json_results.append({
+                json_results['scan_results']['issues'].append({
                     'service': r[0],
                     'resource': r[1],
                     'issue': r[2],
                     'severity': r[3]
                 })
-            print(json.dumps(json_results, indent=2))
+            
+            # Only output the JSON with no additional text
+            print(json.dumps(json_results, indent=2, sort_keys=False, ensure_ascii=False))
         elif output == 'csv':
             import csv
             from io import StringIO
-            output = StringIO()
-            writer = csv.writer(output)
+            output_buffer = StringIO()
+            writer = csv.writer(output_buffer)
             writer.writerow(["Service", "Resource", "Issue", "Severity"])
             writer.writerows(results)
-            print(output.getvalue())
-        
-        click.echo(f"\nScan complete. Found {len(results)} security issues.")
+            # Only output the CSV with no additional text
+            print(output_buffer.getvalue().strip())
     else:
-        click.echo("No security issues found. Your AWS environment looks secure!")
+        if output == 'table':
+            click.echo("No security issues found. Your AWS environment looks secure!")
+        elif output == 'json':
+            empty_result = {
+                'scan_results': {
+                    'profile': profile,
+                    'region': region,
+                    'scan_time': import_datetime_for_json(),
+                    'issues_count': 0,
+                    'issues': []
+                }
+            }
+            print(json.dumps(empty_result, indent=2, sort_keys=False, ensure_ascii=False))
+        elif output == 'csv':
+            print("Service,Resource,Issue,Severity")
 
 @main.command('version')
 def version():
