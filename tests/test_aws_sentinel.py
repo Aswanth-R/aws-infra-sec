@@ -1,3 +1,6 @@
+"""
+Tests for AWS Sentinel core functionality
+"""
 import unittest
 from unittest.mock import patch
 from moto import mock_aws
@@ -6,7 +9,8 @@ import logging
 import sys
 import colorama
 from colorama import Fore, Style
-from main import (
+
+from aws_sentinel.core import (
     check_public_buckets,
     check_public_security_groups,
     check_unencrypted_ebs_volumes,
