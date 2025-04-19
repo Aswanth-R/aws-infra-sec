@@ -20,7 +20,7 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.version_option(
-    version='0.1.0', 
+    version='0.1.1', 
     prog_name='AWS Sentinel',
     message='%(prog)s v%(version)s - A security scanner for AWS resources'
 )
@@ -193,7 +193,7 @@ def scan(profile, region, checks, output, severity, verbose):
 @main.command('version')
 def version():
     """Display the version of AWS Sentinel."""
-    click.echo("AWS Sentinel v0.1.0")
+    click.echo("AWS Sentinel v0.1.1")
 
 # Add a docs command to show more detailed usage instructions
 @main.command('docs')

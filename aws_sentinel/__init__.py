@@ -5,7 +5,7 @@ A command-line tool to identify security vulnerabilities and
 misconfigurations in your AWS account.
 """
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 __author__ = 'Rishab Kumar'
 __email__ = 'rishabkumar7@gmail.com'
 __license__ = 'MIT'
