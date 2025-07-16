@@ -1,28 +1,23 @@
 
-# AWS Sentinel
+# AWS InfraSec
 
-AWS Sentinel is a powerful command-line security scanner for AWS resources. It helps identify common security issues and misconfigurations in your AWS environment.
+AWS InfraSec is a powerful command-line security scanner for AWS resources. It helps identify common security issues and misconfigurations in your AWS environment.
 
 ## Features
 
-AWS Sentinel currently checks for the following security issues:
-
-- **S3 Buckets**: Identifies publicly accessible buckets
-- **EC2 Security Groups**: Finds security groups with port 22 (SSH) open to the public
-- **EBS Volumes**: Detects unencrypted volumes
-- **IAM Users**: Identifies users without Multi-Factor Authentication (MFA)
+AWS InfraSec currently checks for the following security issues:
 
 ## Installation
 
-You can install AWS Sentinel using pip:
+You can install AWS InfraSec using pip:
 
 ```bash
-pip install aws-sentinel
+pip install aws-infrasec
 ```
 
 Or using uv
 ```bash
-uv pip install aws-sentinel
+uv pip install aws-infrasec
 ```
 
 ## Usage
@@ -32,7 +27,7 @@ uv pip install aws-sentinel
 Run a full security scan using your default AWS profile:
 
 ```bash
-aws-sentinel scan
+aws-infrasec scan
 ```
 
 If you don't specify a profile or region, it will use the default profile and `us-east-1` region.
@@ -40,7 +35,7 @@ If you don't specify a profile or region, it will use the default profile and `u
 ### Command Options
 
 ```
-Usage: aws-sentinel scan [OPTIONS]
+Usage: aws-infrasec scan [OPTIONS]
 
 Options:
   --profile TEXT               AWS profile to use for authentication (from
@@ -61,37 +56,37 @@ Options:
 Run a scan with a specific AWS profile and region:
 
 ```bash
-aws-sentinel scan --profile production --region us-west-2
+aws-infrasec scan --profile production --region us-west-2
 ```
 
 Run only specific security checks:
 
 ```bash
-aws-sentinel scan --checks s3,iam
+aws-infrasec scan --checks s3,iam
 ```
 
 Export results in JSON format:
 
 ```bash
-aws-sentinel scan --output json > security_report.json
+aws-infrasec scan --output json > security_report.json
 ```
 
 Export results in CSV format:
 
 ```bash
-aws-sentinel scan --output csv > security_report.csv
+aws-infrasec scan --output csv > security_report.csv
 ```
 
 Show only high severity issues:
 
 ```bash
-aws-sentinel scan --severity high
+aws-infrasec scan --severity high
 ```
 
 Get detailed documentation:
 
 ```bash
-aws-sentinel docs
+aws-infrasec docs
 ```
 
 ## Example Output
@@ -99,14 +94,14 @@ aws-sentinel docs
 ### Table Format (Default)
 
 ```bash
- █████╗ ██╗    ██╗███████╗    ███████╗███████╗███╗   ██╗████████╗██╗███╗   ██╗███████╗██╗     
-██╔══██╗██║    ██║██╔════╝    ██╔════╝██╔════╝████╗  ██║╚══██╔══╝██║████╗  ██║██╔════╝██║     
-███████║██║ █╗ ██║███████╗    ███████╗█████╗  ██╔██╗ ██║   ██║   ██║██╔██╗ ██║█████╗  ██║     
-██╔══██║██║███╗██║╚════██║    ╚════██║██╔══╝  ██║╚██╗██║   ██║   ██║██║╚██╗██║██╔══╝  ██║     
-██║  ██║╚███╔███╔╝███████║    ███████║███████╗██║ ╚████║   ██║   ██║██║ ╚████║███████╗███████╗
-╚═╝  ╚═╝ ╚══╝╚══╝ ╚══════╝    ╚══════╝╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚═╝╚═╝  ╚═══╝╚══════╝╚══════╝
+ █████╗ ██╗    ██╗███████╗    ██╗███╗   ██╗███████╗██████╗  █████╗ ███████╗███████╗ ██████╗
+██╔══██╗██║    ██║██╔════╝    ██║████╗  ██║██╔════╝██╔══██╗██╔══██╗██╔════╝██╔════╝██╔════╝
+███████║██║ █╗ ██║███████╗    ██║██╔██╗ ██║█████╗  ██████╔╝███████║███████╗█████╗  ██║     
+██╔══██║██║███╗██║╚════██║    ██║██║╚██╗██║██╔══╝  ██╔══██╗██╔══██║╚════██║██╔══╝  ██║     
+██║  ██║╚███╔███╔╝███████║    ██║██║ ╚████║██║     ██║  ██║██║  ██║███████║███████╗╚██████╗
+╚═╝  ╚═╝ ╚══╝╚══╝ ╚══════╝    ╚═╝╚═╝  ╚═══╝╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝
                                                                         
-                      AWS Security Sentinel
+                       AWS Security InfraSec
 
 Scanning AWS account using profile: default in region: us-east-1
 Initializing security checks...
@@ -169,8 +164,8 @@ To set up the project for development:
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/rishabkumar7/aws-sentinel.git
-    cd aws-sentinel
+    git clone https://github.com/aswanth/aws-infrasec.git
+    cd aws-infrasec
     
     ```
 

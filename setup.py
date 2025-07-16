@@ -1,5 +1,5 @@
 """
-Setup script for AWS Sentinel
+Setup script for AWS InfraSec
 """
 from setuptools import setup, find_packages
 
@@ -7,14 +7,14 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="aws-sentinel",
-    version="0.1.1",
-    author="Rishab Kumar",
-    author_email="rishabkumar7@gmail.com",
+    name="aws-infrasec",
+    version="2.0",
+    author="Aswanth",
+    author_email="aswanthrajan97@gmail.com",
     description="A security scanner for AWS resources",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/rishabkumar7/aws-sentinel",
+    url="https://github.com/",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -30,7 +30,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "aws-sentinel=aws_sentinel.cli:main",
+            "aws-infrasec=aws_infrasec.cli:main",
         ],
     },
 )
